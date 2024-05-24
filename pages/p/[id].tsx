@@ -3,18 +3,21 @@ import { GetServerSideProps } from "next"
 import ReactMarkdown from "react-markdown"
 import Layout from "../../components/Layout"
 import { PostProps } from "../../components/Post"
+import prisma from "../../lib/prisma"
 
+
+//serverside props bc the path is dynamic and depends on a specific id fetched from the db? 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const post = {
-    id: "1",
-    title: "Prisma is the perfect ORM for Next.js",
-    content: "[Prisma](https://github.com/prisma/prisma) and Next.js go _great_ together!",
-    published: false,
-    author: {
-      name: "Nikolas Burk",
-      email: "burk@prisma.io",
+  const post = await prisma.post.findUnique({
+    where: {
+      id: String(params?.id),
     },
-  }
+    include: {
+      author: {
+        select: { name: true },
+      },
+    },
+  });
   return {
     props: post,
   }

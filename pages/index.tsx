@@ -2,20 +2,19 @@ import React from "react"
 import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
 import Post, { PostProps } from "../components/Post"
+import prisma from '../lib/prisma'
+
+//getstaticprops fetches them from the db using the prisma client and returns them. nextjs populates those props in the tsx below. static b/c the path is always the same and it will always return all posts?  as opposed to serverside props in which the path is dynamic?
 
 export const getStaticProps: GetStaticProps = async () => {
-  const feed = [
-    {
-      id: "1",
-      title: "Prisma is the perfect ORM for Next.js",
-      content: "[Prisma](https://github.com/prisma/prisma) and Next.js go _great_ together!",
-      published: false,
+  const feed = await prisma.post.findMany({
+    where: { published: true },
+    include: {
       author: {
-        name: "Nikolas Burkk",
-        email: "burk@prisma.io",
+        select: { name: true },
       },
     },
-  ]
+  });
   return { 
     props: { feed }, 
     revalidate: 10 
