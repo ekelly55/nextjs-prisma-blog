@@ -6,7 +6,7 @@ import { PostProps } from "../../components/Post"
 import prisma from "../../lib/prisma"
 
 
-//serverside props bc the path is dynamic and depends on a specific id fetched from the db? 
+//serverside props bc the path is dynamic and depends on a specific id fetched from the db? b/c it's dynamic, it can't be pre-rendered. it has to be fetched and rendered with each request to load a given post id page.
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post = await prisma.post.findUnique({
     where: {
